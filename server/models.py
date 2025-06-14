@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, Float
 from database import Base
 
 class Song(Base):
@@ -9,4 +9,4 @@ class Song(Base):
     artist = Column(String, index=True)
     genre = Column(String, index=True)
     review = Column(String, index=True)
-    rating = Column(float, index=True)
+    rating = Column(Float, index=True)
