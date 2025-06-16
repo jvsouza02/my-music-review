@@ -27,3 +27,9 @@ class SongRepository:
             return self.db.execute(songs).scalars().all()
         except SQLAlchemyError as e:
             raise RuntimeError("Database query failed") from e
+        
+    def get_all_genres(self):
+        try:
+            return self.db.execute(select(Song.genre.distinct())).scalars().all()
+        except SQLAlchemyError as e:
+            raise RuntimeError("Database query failed") from e

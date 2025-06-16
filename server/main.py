@@ -1,10 +1,24 @@
 from fastapi import FastAPI, Depends, Body, Query, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from typing import Optional, Annotated, List
 from database import get_db
 from services.song_service import SongService
 
 app = FastAPI()
+
+origins = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,      
+    allow_credentials=True,      
+    allow_methods=["*"],          
+    allow_headers=["*"],          
+)
 
 class Song(BaseModel):
     title: Annotated[str, Field(..., min_length=1, max_length=100)]
@@ -46,6 +60,16 @@ def get_songs(search: Annotated[str, Query(max_length=60)] = None, genre: Annota
     song_service = SongService(db)
     try:
         return song_service.get_songs(search, genre)
+    except ValueError as e:
+        HTTPException(status_code=404, detail=str(e))
+    except RuntimeError as e:
+        HTTPException(status_code=500, detail="Server error. Try to reload the page.")
+
+@app.get('/songs/genres')
+def get_genres(db = Depends(get_db)):
+    song_service = SongService(db)
+    try:
+        return song_service.get_all_genres()
     except ValueError as e:
         HTTPException(status_code=404, detail=str(e))
     except RuntimeError as e:

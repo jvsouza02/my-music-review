@@ -1,10 +1,24 @@
 import Song from "./Song";
+import type { SongType } from "../../types/Song";
+import { useState, useContext, useEffect } from "react";
+import { GenreFilterContext, SearchContext } from "../ui/MainContainer";
 
 export default function SongList() {
+    const [songs, setSongs] = useState<SongType[]>([]);
+    const { genreFilter } = useContext(GenreFilterContext);
+    const { search } = useContext(SearchContext);
+
+    useEffect(() => {
+        fetch(`http://127.0.0.1:8000/songs?search=${search}&genre=${genreFilter}`, {method: "GET"})
+            .then((res) => res.json())
+            .then((data) => setSongs(data));
+    }, [search]);
+
     return (
         <section className="bg-white flex flex-col w-full h-auto mx-auto rounded-lg shadow-md gap-2 p-2">
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Corrupti quibusdam minima cupiditate at adipisci? Nisi ad similique ullam, doloremque dolorem ipsum quas laudantium culpa accusantium ab, amet ex, porro neque!</p>
-            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Illum at, fugiat accusantium harum alias similique voluptatem sed voluptatum, libero et temporibus deleniti eaque? Eveniet nemo eum doloremque nostrum maxime? Id.</p>
+            {songs.map((song) => (
+                <Song key={song.id_song} song={song} />
+            ))}
         </section>
     );
 }
