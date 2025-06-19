@@ -24,7 +24,7 @@ class Song(BaseModel):
     title: Annotated[str, Field(..., min_length=1, max_length=100)]
     artist: Annotated[str, Field(..., min_length=2, max_length=100)]
     genre: Annotated[str, Field(..., min_length=2, max_length=100)]
-    review: Annotated[str, Field(min_length=2, max_length=100)]
+    review: Annotated[Optional[str], Field(max_length=100)] = None
     rating: Annotated[float, Field(..., ge=0, le=10)]
 
 class SongsOut(BaseModel):
@@ -45,8 +45,12 @@ class SongUpdate(BaseModel):
     review: Optional[str] = None
     rating: Optional[float] = None
 
+def validate_review_lenght(review: str):
+    if review and len(review) < 2:
+        raise ValueError("Review must be at least 2 characters long.")
+
 @app.post('/songs/')
-def create_review(song: Annotated[Song, Body(..., title="Create and review song", description="Method used to create and review song at the same time")], db = Depends(get_db)):
+def create_review(song: Annotated[Song, Body(..., Depends=[validate_review_lenght], title="Create and review song", description="Method used to create and review song at the same time", )], db = Depends(get_db)):
     song_service = SongService(db)
     try:
         song_service.create_review(song)
