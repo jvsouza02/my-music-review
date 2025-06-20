@@ -1,4 +1,4 @@
-from sqlalchemy import select, and_, or_
+from sqlalchemy import select, and_, or_, delete
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
 from models import Song
@@ -15,8 +15,9 @@ class SongRepository:
             self.db.add(new_song)
             self.db.commit()
             self.db.refresh(new_song)
-            return new_song
+            return {"message": "Song created successfully"}
         except SQLAlchemyError as e:
+            self.db.rollback()
             raise RuntimeError("Database insert failed") from e
 
     def get_songs(self, search: str | None = None, genre: str | None = None):
@@ -29,6 +30,15 @@ class SongRepository:
             return self.db.execute(songs).scalars().all()
         except SQLAlchemyError as e:
             raise RuntimeError("Database query failed") from e
+        
+    def delete_song(self, id_song: int):
+        try:
+            self.db.execute(delete(Song).where(Song.id_song == id_song))
+            self.db.commit()
+            return {"message": "Song deleted successfully"}
+        except SQLAlchemyError as e:
+            self.db.rollback()
+            raise RuntimeError("Database delete failed") from e
         
     def get_all_genres(self):
         try:

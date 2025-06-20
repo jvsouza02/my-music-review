@@ -5,16 +5,27 @@ import type { SongType } from "../../types/Song";
 
 function AddStars(rating: number) {
     const stars = [];
+    const ratingOutOfFive = rating / 2;
+
     for (let i = 1; i <= 5; i++) {
-        if ((rating / 2) >= i) {
-            stars.push(<FaStar key={i} className="text-yellow-500"/>);
-        } else if ((rating / 2 ) < i && Math.floor(rating / 2) == i - 1) {
-            stars.push(<FaRegStarHalfStroke key={i} className="text-yellow-500"/>);
+        if (i <= Math.floor(ratingOutOfFive)) {
+            stars.push(<FaStar key={i} className="text-yellow-500" />);
+        } else if (i - 0.5 <= ratingOutOfFive) {
+            stars.push(<FaRegStarHalfStroke key={i} className="text-yellow-500" />);
         } else {
-            stars.push(<FaRegStar key={i} className="text-yellow-500"/>);
+            stars.push(<FaRegStar key={i} className="text-yellow-500" />);
         }
     }
+
     return stars;
+}
+
+
+function deleteSong(id_song: number) {
+    fetch(`http://127.0.0.1:8000/song/${id_song}`, {method: 'DELETE'})
+    .then(response => response.json())
+    .then(data => console.log(data))
+    .catch(err => console.log("An error has occurred: " + err));
 }
 
 export default function Song({ song }: { song: SongType }) {
@@ -29,7 +40,7 @@ export default function Song({ song }: { song: SongType }) {
             </div>
             <div className="w-1/12 flex justify-end gap-2">
                 <button className="text-gray-700 text-xl leading-none hover:text-blue-500"><FaRegEdit /></button>
-                <button className="text-gray-700 text-2xl leading-none hover:text-red-500"><MdDeleteForever /></button>
+                <button className="text-gray-700 text-2xl leading-none hover:text-red-500" onClick={() => deleteSong(song.id_song)}><MdDeleteForever /></button>
             </div>
         </div>
     )

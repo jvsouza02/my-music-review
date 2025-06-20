@@ -14,8 +14,8 @@ class SongService:
     def update_review(self, song: Song):
         return self.song_repository.update_review(song)
     
-    def delete_review(self, id_song: int):
-        return self.song_repository.delete_review(id_song)
+    def delete_song(self, id_song: int):
+        return self.song_repository.delete_song(id_song)
 
     def get_songs(self, search: str, genre: str):
         return self.song_repository.get_songs(search, genre)

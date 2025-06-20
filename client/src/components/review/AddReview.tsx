@@ -18,7 +18,7 @@ export default function AddReview({ setAddReviewIsOpen }: { setAddReviewIsOpen: 
     });
 
     function saveReview() {
-            fetch("http://127.0.0.1:8000/songs/", {
+            fetch("http://127.0.0.1:8000/song/", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
