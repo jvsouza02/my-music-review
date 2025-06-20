@@ -10,6 +10,8 @@ class SongRepository:
     def create_review(self, song: Song):
         new_song = Song(**song.dict())
         try:
+            if self.db.execute(select(Song).where(and_(Song.title == new_song.title, Song.artist == new_song.artist))).scalar():
+                raise ValueError("Song already exists")
             self.db.add(new_song)
             self.db.commit()
             self.db.refresh(new_song)

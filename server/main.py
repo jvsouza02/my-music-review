@@ -46,8 +46,8 @@ class SongUpdate(BaseModel):
     rating: Optional[float] = None
 
 def validate_review_lenght(review: str):
-    if review and len(review) < 2:
-        raise ValueError("Review must be at least 2 characters long.")
+    if review and len(review) < 2 and len(review) > 63:
+        raise ValueError("Review must be at least 2 and at most 63 characters long.")
 
 @app.post('/songs/')
 def create_review(song: Annotated[Song, Body(..., Depends=[validate_review_lenght], title="Create and review song", description="Method used to create and review song at the same time", )], db = Depends(get_db)):

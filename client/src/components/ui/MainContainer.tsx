@@ -20,7 +20,7 @@ export default function MainContainer() {
     const [genreFilter, setGenreFilter] = useState<string>("");
 
     return (
-        <main className="w-4/6 mt-4 h-auto mx-auto flex flex-row gap-3">
+        <main className="w-5/6 mt-4 h-auto mx-auto flex flex-row gap-3">
             <SearchContext.Provider value={{ search, setSearch }}>
                 <GenreFilterContext.Provider value={{ genreFilter, setGenreFilter }}>
                     <ReviewFilters />
